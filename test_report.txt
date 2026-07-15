@@ -1,0 +1,5 @@
+METROPOLIS DIAGNOSTICS LABS
+Patient Name: Test User
+Age/Sex: 30 Y / Male
+Hemoglobin 11.2 g/dL 13.8 - 17.2
+TSH 6.82 mIU/L 0.40 - 4.50

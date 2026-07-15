@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediLens AI - Medical Report Explainer & Doctor Summary Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">
+        <i data-lucide="shield-alert" style="width: 24px; height: 24px;"></i>
+      </div>
+      <span>MediLens AI</span>
+    </div>
+
+    <nav class="nav-actions">
+      <a href="#" class="nav-link" data-page="landing">Home</a>
+      <a href="#" class="nav-link" data-page="upload">Analyze Report</a>
+
+      <button class="btn-icon" id="theme-toggle" title="Toggle theme">
+        <i data-lucide="moon"></i>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+
+    <!-- Permanent Educational Disclaimer Banner -->
+    <div class="safety-banner">
+      <i data-lucide="alert-triangle" style="color: #d97706; width: 22px; height: 22px;"></i>
+      <div>
+        <strong>Educational Tool Only:</strong> MediLens AI is designed to clarify lab values and help you prepare
+        questions for your doctor.
+        It does not diagnose conditions, prescribe treatments, or replace professional clinical consultations. Always
+        verify lab results with a qualified healthcare professional.
+      </div>
+    </div>
+
+    <!-- 1. LANDING PAGE STATE -->
+    <section id="landing" class="page-route">
+      <div class="landing-hero">
+        <h1>Understand Your Lab Reports in Plain English</h1>
+        <p>Upload blood tests, compare results with reference ranges, flag warning biomarkers, and prepare smart
+          questions for your doctor—all with total privacy.</p>
+
+        <div class="landing-ctas">
+          <button class="btn btn-primary btn-nav" data-page="upload">
+            <i data-lucide="upload-cloud"></i> Upload Lab Report
+          </button>
+        </div>
+      </div>
+
+      <h2 style="text-align: center; margin-bottom: 2rem;">How it works</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="scan-line"></i></div>
+          <h3>Local Text Extraction</h3>
+          <p>Read text directly from PDF documents or scans using in-browser OCR. Your document never leaves your
+            machine.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="edit-3"></i></div>
+          <h3>Correction Editor</h3>
+          <p>AI text readers can make typos. Review and edit the extracted biomarker values manually before analysis to
+            ensure safety.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="file-text"></i></div>
+          <h3>Doctor-Ready Summary</h3>
+          <p>Consolidate warnings into a clean, printable single-page summary along with customized discussion points
+            for your doctor check-up.</p>
+        </div>
+
+      </div>
+
+      <!-- Quick Demo Samples Section -->
+      <div class="card samples-picker">
+        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+          <i data-lucide="play-circle" style="color:var(--primary);"></i> Check with Sample Reports
+        </h3>
+        <p style="margin-bottom:1rem;">Don't have a report on hand? Test the system immediately with one of our
+          high-quality sample blood tests:</p>
+
+        <div class="samples-list">
+          <button class="sample-btn sample-pick-btn" data-sample-id="sample-cbc">
+            <span>Complete Blood Count (CBC) — <small style="color:var(--text-secondary);">Anemia/Infection
+                Sample</small></span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <button class="sample-btn sample-pick-btn" data-sample-id="sample-thyroid">
+            <span>Thyroid Panel — <small style="color:var(--text-secondary);">Subclinical Hypothyroidism
+                Sample</small></span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <button class="sample-btn sample-pick-btn" data-sample-id="sample-diabetes">
+            <span>Diabetes Screening — <small style="color:var(--text-secondary);">Prediabetes Sample</small></span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <button class="sample-btn sample-pick-btn" data-sample-id="sample-lipid">
+            <span>Lipid Profile (Cholesterol) — <small style="color:var(--text-secondary);">Cardiovascular Risk
+                Sample</small></span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <button class="sample-btn sample-pick-btn" data-sample-id="sample-vitamin">
+            <span>Vitamin D & B12 Test — <small style="color:var(--text-secondary);">Deficiency Sample</small></span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. UPLOAD & SCANNING PAGE STATE -->
+    <section id="upload" class="page-route">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="#" class="btn-text btn-nav" data-page="landing"><i data-lucide="chevron-left"></i> Back to Home</a>
+      </div>
+
+      <h2>Upload Your Medical Report</h2>
+      <p style="margin-bottom: 2rem;">Upload a blood test PDF. The text is processed locally inside
+        your browser.</p>
+
+      <div class="upload-container">
+
+        <!-- Left: Upload zone & Consent -->
+        <div class="card">
+          <div class="drag-drop-zone" id="drop-zone">
+            <i data-lucide="upload-cloud" class="drag-drop-icon" style="width: 48px; height: 48px;"></i>
+            <h3>Drag & Drop File Here</h3>
+            <p>Supports PDF, JPEG, or PNG formats</p>
+            <button class="btn btn-secondary">Select File</button>
+            <input type="file" id="file-input" style="display: none;" accept=".pdf,.jpg,.jpeg,.png,.txt">
+          </div>
+
+          <!-- Selected File Card -->
+          <div class="file-preview" id="file-preview-card" style="display: none;">
+            <div class="file-info">
+              <i data-lucide="file-text" style="color: var(--primary);"></i>
+              <div>
+                <div class="file-name" id="upload-file-name">filename.pdf</div>
+                <div class="file-size" id="upload-file-size">1.2 MB</div>
+              </div>
+            </div>
+            <button class="btn-icon btn-danger" id="remove-file-btn" title="Remove file">
+              <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </button>
+          </div>
+
+          <!-- Consent Checkbox -->
+          <label class="consent-box">
+            <input type="checkbox" id="consent-checkbox">
+            <span class="consent-text">
+              I consent to the local analysis of this medical report. I understand this tool provides educational
+              explanations, not medical diagnoses. I will review all outcomes with a certified doctor.
+            </span>
+          </label>
+
+          <button class="btn btn-primary" id="start-scan-btn" style="width: 100%;" disabled>
+            <i data-lucide="activity"></i> Start Lab Scan
+          </button>
+        </div>
+
+
+
+      </div>
+    </section>
+
+    <!-- 3. CORRECTION EDITOR STATE -->
+    <section id="editor" class="page-route">
+      <h2>Verify Extracted Data</h2>
+      <p style="margin-bottom: 2rem;">Double-check that values match your paper report. You can modify, delete, or add
+        parameters manually to ensure correctness.</p>
+
+      <!-- Non-medical report warning banner -->
+      <div id="editor-warning-banner" class="warning-banner"
+        style="display: none; align-items: center; justify-content: space-between;">
+        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+          <i data-lucide="alert-octagon"></i>
+          <div>
+            <strong>Document Warning:</strong> This file does not appear to be a standard medical lab report (e.g.,
+            blood
+            test). Please check if you uploaded the correct file. You can still manually enter values below.
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-upload-another"
+          style="margin-left: 1rem; white-space: nowrap; flex-shrink: 0; background: var(--bg-card);">
+          <i data-lucide="upload" style="width: 16px; height: 16px; margin-right: 4px;"></i> Upload Another
+        </button>
+      </div>
+
+      <div class="editor-layout">
+
+        <!-- Table inputs -->
+        <div class="card">
+          <h3 style="margin-bottom: 1rem;">Report Details</h3>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Patient Name</label>
+              <input type="text" id="editor-patient-name" placeholder="John Doe">
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Age</label>
+              <input type="number" id="editor-patient-age" placeholder="e.g. 35">
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Report Date</label>
+              <input type="date" id="editor-report-date">
+            </div>
+          </div>
+
+          <h3 style="margin-bottom: 0.75rem;">Extracted Lab Parameters</h3>
+          <div class="editor-table-container">
+            <table class="editor-table">
+              <thead>
+                <tr>
+                  <th>Test Name</th>
+                  <th>Value</th>
+                  <th>Unit</th>
+                  <th>Ref. Range</th>
+                  <th style="width: 50px;"></th>
+                </tr>
+              </thead>
+              <tbody id="editor-tbody">
+                <!-- Rows dynamically added here -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="editor-table-actions">
+            <button class="btn btn-secondary" id="editor-add-row">
+              <i data-lucide="plus"></i> Add Parameter
+            </button>
+            <button class="btn btn-primary" id="editor-analyze-btn">
+              Generate Final Analysis <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. RESULTS VIEW STATE -->
+    <section id="results" class="page-route">
+      <div class="results-header-card">
+        <h2 id="results-title">Lab Report Analysis</h2>
+
+        <div class="results-meta">
+          <div class="meta-item">
+            <i data-lucide="user" style="width:18px; height:18px;"></i>
+            <span>Patient: <strong id="results-patient"></strong></span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="hash" style="width:18px; height:18px;"></i>
+            <span>ID: <strong id="results-id">Unknown</strong></span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="calendar" style="width:18px; height:18px;"></i>
+            <span>Date: <strong id="results-date">N/A</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Non-medical report warning banner -->
+      <div id="results-warning-banner" class="warning-banner"
+        style="display: none; margin-top: 1.5rem; margin-bottom: 1.5rem; align-items: center; justify-content: space-between;">
+        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+          <i data-lucide="alert-octagon"></i>
+          <div>
+            <strong>Document Warning:</strong> This analysis was performed on a file that does not appear to be a
+            standard
+            medical lab report. Please verify all parameters manually.
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-upload-another"
+          style="margin-left: 1rem; white-space: nowrap; flex-shrink: 0; background: var(--bg-card);">
+          <i data-lucide="upload" style="width: 16px; height: 16px; margin-right: 4px;"></i> Upload Another
+        </button>
+      </div>
+
+      <div class="results-layout">
+
+        <!-- Left: Values Table -->
+        <div>
+          <h3 style="margin-bottom: 1rem; display:flex; align-items:center; gap:0.5rem;">
+            <i data-lucide="table"></i> Extracted Parameters (Select for details)
+          </h3>
+          <div class="results-table-container">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>Test Parameter</th>
+                  <th>Value</th>
+                  <th>Unit</th>
+                  <th>Reference Range</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="results-tbody">
+                <!-- Rows populated by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Explanation Details Card -->
+        <div class="explanation-panel">
+          <h3 style="display:flex; align-items:center; gap:0.5rem;"><i data-lucide="info"></i> Interactive Explainer
+          </h3>
+          <div class="card explanation-card" id="explanation-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+              <div>
+                <h2 id="expl-name" style="font-size: 1.35rem; margin-bottom: 0.25rem;">Select a Test</h2>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);" id="expl-val">-</div>
+              </div>
+              <div id="expl-badge-wrap">
+                <!-- Status Badge -->
+              </div>
+            </div>
+
+            <div class="explanation-detail-block">
+              <h4
+                style="margin-bottom: 0.4rem; font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                Educational Meaning</h4>
+              <p id="expl-text" style="font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.6;">
+                Click any row in the lab parameters table to view a patient-friendly explanation, what the marker does,
+                and suggested clinical conversation points.
+              </p>
+
+              <h4
+                style="margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                Suggested Questions</h4>
+              <ul id="expl-questions" style="padding-left: 1.25rem; line-height: 1.5;">
+                <!-- Populate questions -->
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Narrative Summary -->
+      <div class="summary-card">
+        <h3 style="margin-bottom: 1rem; display:flex; align-items:center; gap:0.5rem;">
+          <i data-lucide="book-open" style="color:var(--primary);"></i> Educational Summary
+        </h3>
+        <p id="results-summary-text" class="summary-text">Summary text here...</p>
+      </div>
+
+      <!-- Health Risk Alerts -->
+      <div id="disease-warnings-container" class="card"
+        style="margin-top: 1.5rem; display: none; border-left: 4px solid #ef4444; background: var(--bg-card);">
+        <h3 style="margin-bottom: 0.75rem; display:flex; align-items:center; gap:0.5rem; color: #ef4444;">
+          <i data-lucide="alert-triangle"></i> Potential Health Conditions & Risks Detected
+        </h3>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-secondary);">
+          Based on the parameters that fell outside typical reference ranges, the following potential clinical
+          correlations are noted for discussion with your doctor:
+        </p>
+        <ul id="disease-warnings-list"
+          style="padding-left: 1.25rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- Populated dynamically by app.js -->
+        </ul>
+      </div>
+
+      <!-- Action items -->
+      <div style="margin-top: 2rem; display: flex; justify-content: space-between;">
+        <button class="btn btn-secondary btn-nav" data-page="upload"><i data-lucide="upload"></i> Upload
+          Another</button>
+        <button class="btn btn-primary btn-nav" data-page="summary">Generate Doctor Summary <i
+            data-lucide="file-check"></i></button>
+      </div>
+    </section>
+
+    <!-- 5. DOCTOR SUMMARY PRINTABLE VIEW STATE -->
+    <section id="summary" class="page-route">
+
+      <!-- Actions Bar -->
+      <div class="summary-actions-bar">
+        <button class="btn btn-secondary btn-nav" data-page="results"><i data-lucide="arrow-left"></i> Back to
+          Results</button>
+
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+          <label class="redaction-toggle">
+            <input type="checkbox" id="redact-checkbox">
+            <span>Redact Personal Info</span>
+          </label>
+          <button class="btn btn-primary" id="print-summary-btn"><i data-lucide="printer"></i> Print Summary</button>
+        </div>
+      </div>
+
+      <!-- Main Summary Sheet (Paper Format) -->
+      <div class="doctor-summary-container">
+
+        <div class="summary-header">
+          <h2 id="sum-title">Lab Summary Report</h2>
+          <p style="color:#cbd5e1; margin-bottom:0;">Prepared using MediLens AI Local Explainer</p>
+          <div class="summary-header-disclaimer">
+            NOTICE FOR CLINICIAN: This summary is generated from raw lab values input by the user. It is for
+            organizational and educational support to assist the patient in preparing for consultation.
+            <span id="sum-warning-text" style="display: none; color: #ef4444; font-weight: bold; margin-top: 0.5rem;">
+              ⚠️ WARNING: The source document was not recognized as a standard medical lab report. Please verify all
+              values.
+            </span>
+          </div>
+        </div>
+
+        <div class="patient-details-grid">
+          <div>
+            <div class="patient-meta-label">Patient Name</div>
+            <div class="patient-meta-val" id="sum-patient-name">Unknown</div>
+          </div>
+          <div>
+            <div class="patient-meta-label">Patient ID</div>
+            <div class="patient-meta-val" id="sum-patient-id">Unknown</div>
+          </div>
+          <div>
+            <div class="patient-meta-label">Report Date</div>
+            <div class="patient-meta-val" id="sum-report-date">N/A</div>
+          </div>
+          <div>
+            <div class="patient-meta-label">Print Date</div>
+            <div class="patient-meta-val">2026-07-04</div>
+          </div>
+        </div>
+
+        <div class="summary-body">
+
+          <!-- Key Abnormal / Out of Range Items -->
+          <div class="doctor-summary-section">
+            <h3><i data-lucide="alert-circle" style="color:#ef4444; width:20px; height:20px;"></i> Parameter Values
+              Overview</h3>
+            <div class="results-table-container">
+              <table class="results-table">
+                <thead>
+                  <tr>
+                    <th>Biomarker</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Reference Range</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="sum-table-body">
+                  <!-- Insert normal/abnormal lists -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Summary translation -->
+          <div class="doctor-summary-section">
+            <h3><i data-lucide="clipboard-list" style="color:var(--primary); width:20px; height:20px;"></i> Educational
+              Summary</h3>
+            <p id="sum-ai-summary" style="font-size: 0.975rem; line-height:1.6; color:#334155; white-space:pre-wrap;">
+              Report summary text...
+            </p>
+          </div>
+
+          <!-- Tailored Questions for Doctor -->
+          <div class="doctor-summary-section">
+            <h3><i data-lucide="message-square" style="color:var(--accent); width:20px; height:20px;"></i> Patient
+              Discussion Points</h3>
+            <p style="font-size:0.9rem; margin-bottom: 0.75rem; color:#64748b;">Suggested questions compiled based on
+              value deviances:</p>
+            <ol class="doctor-questions-list" id="sum-questions-list">
+              <!-- Dynamically populated -->
+            </ol>
+          </div>
+
+          <!-- Printable Patient notes -->
+          <div class="doctor-summary-section">
+            <h3><i data-lucide="edit-3" style="color:var(--primary); width:20px; height:20px;"></i> Personal Symptoms &
+              Notes</h3>
+            <p style="font-size:0.9rem; color:#64748b; margin-bottom:0.5rem;">Use this area to note down any active
+              symptoms, medications, or specific check points you want to align on with your clinician:</p>
+            <textarea class="summary-notes-area" id="summary-notes-area"
+              placeholder="Type symptoms (e.g. fatigue, headaches, joint pain) or medication updates here..."></textarea>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Scanning Overlay Screen -->
+    <div class="scanning-view" id="scanning-overlay">
+      <div class="scanner-card">
+        <div class="scanner-circle">
+          <i data-lucide="eye" style="width: 40px; height: 40px;"></i>
+          <div class="scanner-line"></div>
+        </div>
+        <h3 id="scan-title">Extracting Medical Data</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 0;">Please wait, OCR is analyzing the document...</p>
+
+        <div class="scan-progress-bar">
+          <div class="scan-progress-fill" id="scan-progress-fill"></div>
+        </div>
+        <span style="font-size: 0.85rem; font-weight:600; color: var(--primary);" id="scan-progress-text">0% Done</span>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal-box">
+        <h3 class="modal-title">Delete Report</h3>
+        <div class="modal-body">
+          Are you sure you want to permanently delete this report from history? This action is local and cannot be
+          undone.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="cancel-delete">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p style="margin-bottom:0.5rem;">MediLens AI — Non-diagnostic Educational Project.</p>
+    <p style="font-size: 0.775rem; margin-bottom: 0;">Privacy Protected. &copy; 2026</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="samples.js"></script>
+  <script src="spatialParser.js"></script>
+  <script src="analyzer.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
