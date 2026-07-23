@@ -175,7 +175,7 @@ MediLens AI runs entirely inside the browser and does not require a backend serv
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/PavanOvhal/Medilens
 cd medilens-ai
 ```
 
